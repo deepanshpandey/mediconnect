@@ -1,0 +1,74 @@
+pipeline {
+    
+    environment {
+        registryCredential = 'dockerhub_id'
+    }
+
+ 
+    agent any
+
+    stages {
+    
+        stage('Git Clone') {
+            steps {
+                git branch: 'main', url: 'https://github.com/coffeeinacafe/mediconnect'
+            }
+        }
+        stage('Install dependancies') {
+            steps {
+                sh 'cd Backend/ && npm i'
+                sh 'cd Ng-frontend/ && npm i'
+                sh 'cd WebRTC_Signaling_Server/ && npm i'
+            } 
+        }
+        stage('Test') {
+            steps {
+                sh 'cd Backend/ && cp .env_test .env && npm test'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'cd Backend/ && cp .env_deploy .env' 
+                sh 'cd Ng-frontend/ && ng build'
+            }
+        }
+        stage('Remove Previous Docker Images If Exists') {
+            steps {
+                sh 'docker rmi mediconnect_webrtc_server  mediconnect_frontend  mediconnect_backend 2> /dev/null || true'
+                sh 'docker rmi /mediconnect_webrtc_server  coffeeinacafe/mediconnect_frontend  coffeeinacafe/mediconnect_backend 2> /dev/null || true'
+            }
+        }
+        stage('Docker containerization') {
+            steps {
+                sh 'docker-compose build'
+            }
+        }
+        stage('Rename Docke Image name to push on Docker Hub') {
+            steps {
+                sh 'docker tag mediconnect_webrtc_server coffeeinacafe/mediconnect_webrtc_server'
+                sh 'docker tag mediconnect_frontend coffeeinacafe/mediconnect_frontend'
+                sh 'docker tag mediconnect_backend coffeeinacafe/mediconnect_backend'
+            }
+        }
+        stage('Deploy on Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                      sh 'docker push coffeeinacafe/mediconnect_webrtc_server'
+                      sh 'docker push coffeeinacafe/mediconnect_frontend'
+                      sh 'docker push coffeeinacafe/mediconnect_backend'
+                    }
+                }
+            }
+        }
+        stage('Deploy with ansible') {
+            steps {
+                ansiblePlaybook becomeUser: null, colorized: true, disableHostKeyChecking: true, installation: 'Ansible', inventory: './ansible_deployment/ansible_inventory', playbook: './ansible_deployment/ansible_deploy.yml', sudoUser: null
+            }
+        }
+        
+
+    }
+}
+
+     
