@@ -1,0 +1,27 @@
+{
+  "name": "webrtc_signaling_server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webrtc-server.js",
+  "scripts": {
+    "start": "node webrtc-server.js",
+    "test": "mocha --exit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/socket.io": "^2.1.10",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "http": "0.0.1-security",
+    "socket.io": "^4.0.1",
+    "uniqid": "^5.3.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "mocha": "^8.3.2",
+    "supertest": "^6.1.3"
+  }
+}
