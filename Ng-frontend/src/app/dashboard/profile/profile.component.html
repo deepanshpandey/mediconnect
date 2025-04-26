@@ -1,0 +1,40 @@
+<div fxLayoutAlign="center center" fxFlexFill class="main-div">
+  <mat-card fxFlex="33">
+    <mat-toolbar color="primary">User Details</mat-toolbar>
+    <form fxLayoutAlign="stretch" fxLayout="column" class="details-form" [formGroup]="details"
+      (ngSubmit)="updateProfile()">
+
+      <mat-form-field>
+        <input matInput type="text" placeholder="firstname" formControlName="firstname">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="text" placeholder="lastname" formControlName="lastname">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="email" placeholder="Email" formControlName="email">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" *ngIf="checkRole()">
+        <mat-label>Specialization</mat-label>
+        <mat-select formControlName="specialization">
+          <mat-option *ngFor="let specialization of specializations" [value]="specialization.value">
+            {{specialization.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <section class="example-section">
+        <mat-checkbox #changePWD class="example-margin" (change)="wantToChangePwd(changePWD._checked)">Want to change Password ?</mat-checkbox>
+      </section>
+      
+      <mat-form-field *ngIf="changePWD._checked">
+        <input matInput type="password" placeholder="password" formControlName="password">
+      </mat-form-field>
+
+
+      <button mat-raised-button color="primary" type="submit">Update Details</button>
+    </form>
+  </mat-card>
+</div>
