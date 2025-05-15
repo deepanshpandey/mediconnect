@@ -1,4 +1,4 @@
-# mediconnect Conferencing application
+# MediConnect Conferencing application
 
 ## OverView
 
