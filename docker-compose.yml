@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # MySQL
   db:
@@ -35,6 +33,11 @@ services:
       - "3000:3000"
     depends_on:
       - db
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PWD: rootroot
+      MYSQL_DB: mediconnect
     #   - logstash
     # environment:
     #   LOGGING_HOST: logstash

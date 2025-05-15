@@ -1,7 +1,7 @@
-FROM nginx:1.17.1-alpine
-COPY ./dist/Frontend /usr/share/nginx/html
+# FROM nginx:1.17.1-alpine
+# COPY ./dist/Frontend /usr/share/nginx/html
 
-FROM node:20-alpine
+FROM node:16-alpine
     
 # Create a directory where our app will be placed
 RUN mkdir -p /app
@@ -22,4 +22,4 @@ COPY . /app/
 EXPOSE 4200
 
 # Serve the app
-CMD ["npm", "start"]
+CMD ["npm", "start", "--", "--host", "0.0.0.0"]

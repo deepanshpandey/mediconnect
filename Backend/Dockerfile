@@ -1,9 +1,10 @@
 # Base image
-FROM node:20-alpine
+FROM node:16-alpine
 
 WORKDIR /backend_server
-COPY . .
+COPY . /backend_server/
+COPY /users/logger.js /backend_server/logger.js
 
-RUN     npm i
+RUN npm install --legacy-peer-deps
 CMD [ "npm", "start" ]
 
