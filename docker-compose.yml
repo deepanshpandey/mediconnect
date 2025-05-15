@@ -19,9 +19,9 @@ services:
   frontend:
     container_name: frontend
     restart: always
-    build: ./Ng-frontend/
+    build: ./Frontend/
     ports:
-      - "4200:80"
+      - "4200:4200"
     depends_on:
       - backend
       - webrtc_server

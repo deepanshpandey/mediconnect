@@ -17,7 +17,7 @@ pipeline {
         stage('Install dependancies') {
             steps {
                 sh 'cd Backend/ && npm i'
-                sh 'cd Ng-frontend/ && npm i'
+                sh 'cd Frontend/ && npm i'
                 sh 'cd WebRTC_Signaling_Server/ && npm i'
             } 
         }
@@ -29,7 +29,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'cd Backend/ && cp .env_deploy .env' 
-                sh 'cd Ng-frontend/ && ng build'
+                sh 'cd Frontend/ && ng build'
             }
         }
         stage('Remove Previous Docker Images If Exists') {

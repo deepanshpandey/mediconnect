@@ -1,7 +1,7 @@
 FROM nginx:1.17.1-alpine
-COPY ./dist/Ng-frontend /usr/share/nginx/html
+COPY ./dist/Frontend /usr/share/nginx/html
 
-FROM node:16
+FROM node:20-alpine
     
 # Create a directory where our app will be placed
 RUN mkdir -p /app
@@ -13,7 +13,7 @@ WORKDIR /app
 COPY package*.json /app/
 
 # Install dependecies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Get all the code needed to run the app
 COPY . /app/
