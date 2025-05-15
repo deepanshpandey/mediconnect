@@ -13,7 +13,7 @@
 
     - name: Remove Previous Docker Images If Exists 
       shell:
-        cmd: docker rmi coffeeinacafe/mediconnect_webrtc_server  coffeeinacafe/mediconnect_frontend  coffeeinacafe/mediconnect_backend 2> /dev/null || true
+        cmd: docker rmi pparth27743/telemedicine_webrtc_server  pparth27743/telemedicine_frontend  pparth27743/telemedicine_backend 2> /dev/null || true
 
     - name: Spin up application using docker-compose 
       shell:

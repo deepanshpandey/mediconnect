@@ -52,6 +52,9 @@ module.exports = {
                     if (error) {
                         callBack(error);
                     }
+                    if (!results || results.length === 0) {
+                        return callBack(null, null); // or custom "user not found" handling
+                    }
                     return callBack(null, results[0]);
                 }
             );
@@ -63,7 +66,11 @@ module.exports = {
                     if (error) {
                         callBack(error);
                     }
+                    if (!results || results.length === 0) {
+                        return callBack(null, null); // or custom "user not found" handling
+                    }
                     return callBack(null, results[0]);
+
                 }
             );
         }

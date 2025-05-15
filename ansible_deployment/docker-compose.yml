@@ -15,17 +15,17 @@ services:
       
   frontend:
     container_name: frontend
-    image: coffeeinacafe/mediconnect_frontend
+    image: pparth27743/telemedicine_frontend
     restart: always
     ports: 
       - "4200:80"
     depends_on: 
       - backend
       - webrtc_server
-
+ 
   backend:
     container_name: backend
-    image: coffeeinacafe/mediconnect_backend 
+    image: pparth27743/telemedicine_backend 
     restart: always
     ports: 
       - "3000:3000"
@@ -34,7 +34,7 @@ services:
   
   webrtc_server:
     container_name: webrtc_server
-    image: coffeeinacafe/mediconnect_webrtc_server
+    image: pparth27743/telemedicine_webrtc_server
     restart: always
     ports: 
       - "4440:4440"

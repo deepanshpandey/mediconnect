@@ -11,7 +11,7 @@ pipeline {
     
         stage('Git Clone') {
             steps {
-                git branch: 'main', url: 'https://github.com/coffeeinacafe/mediconnect'
+                git branch: 'main', url: 'https://github.com/pparth27743/telemedicine'
             }
         }
         stage('Install dependancies') {
@@ -34,8 +34,8 @@ pipeline {
         }
         stage('Remove Previous Docker Images If Exists') {
             steps {
-                sh 'docker rmi mediconnect_webrtc_server  mediconnect_frontend  mediconnect_backend 2> /dev/null || true'
-                sh 'docker rmi /mediconnect_webrtc_server  coffeeinacafe/mediconnect_frontend  coffeeinacafe/mediconnect_backend 2> /dev/null || true'
+                sh 'docker rmi telemedicine_webrtc_server  telemedicine_frontend  telemedicine_backend 2> /dev/null || true'
+                sh 'docker rmi pparth27743/telemedicine_webrtc_server  pparth27743/telemedicine_frontend  pparth27743/telemedicine_backend 2> /dev/null || true'
             }
         }
         stage('Docker containerization') {
@@ -45,18 +45,18 @@ pipeline {
         }
         stage('Rename Docke Image name to push on Docker Hub') {
             steps {
-                sh 'docker tag mediconnect_webrtc_server coffeeinacafe/mediconnect_webrtc_server'
-                sh 'docker tag mediconnect_frontend coffeeinacafe/mediconnect_frontend'
-                sh 'docker tag mediconnect_backend coffeeinacafe/mediconnect_backend'
+                sh 'docker tag telemedicine_webrtc_server pparth27743/telemedicine_webrtc_server'
+                sh 'docker tag telemedicine_frontend pparth27743/telemedicine_frontend'
+                sh 'docker tag telemedicine_backend pparth27743/telemedicine_backend'
             }
         }
         stage('Deploy on Docker Hub') {
             steps {
                 script {
                     docker.withRegistry( '', registryCredential ) {
-                      sh 'docker push coffeeinacafe/mediconnect_webrtc_server'
-                      sh 'docker push coffeeinacafe/mediconnect_frontend'
-                      sh 'docker push coffeeinacafe/mediconnect_backend'
+                      sh 'docker push pparth27743/telemedicine_webrtc_server'
+                      sh 'docker push pparth27743/telemedicine_frontend'
+                      sh 'docker push pparth27743/telemedicine_backend'
                     }
                 }
             }
