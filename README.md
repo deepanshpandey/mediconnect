@@ -50,8 +50,4 @@ Happy Coding! 🙌
 
 #### WebRTC based Audio-Video Conferencing, on top of that this is project created. 
 
-#### You can find only WebRTC Audio-Video Conferencing app code at https://github.com/Jaymeen/WebRTC-Video-Conference
-
-
-
-
+#### You can find only WebRTC Audio-Video Conferencing app code at https://github.com/deepanshpandey/WebRTC-Video-Conference
