@@ -1,4 +1,4 @@
-# Telemedicine Conferencing application
+# mediconnect Conferencing application
 
 ## OverView
 
