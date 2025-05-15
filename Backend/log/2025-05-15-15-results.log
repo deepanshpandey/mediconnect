@@ -1,8 +1,0 @@
-2025-05-15 15:24:46[app.js] error: "ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client"
-2025-05-15 15:24:58[app.js] error: "ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client"
-2025-05-15 15:28:20[app.js] error: "ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client"
-2025-05-15 15:29:18[app.js] error: "ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client"
-2025-05-15 15:29:40[app.js] error: "ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client"
-2025-05-15 15:31:03[app.js] error: "ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client"
-2025-05-15 15:33:17[app.js] info: "Signup Successfully."
-2025-05-15 15:33:31[app.js] info: "login successfully"
