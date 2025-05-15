@@ -1,5 +1,5 @@
 # Base image
-FROM node:14.15-alpine
+FROM node:16-alpine
 
 WORKDIR /backend_server
 COPY . .
