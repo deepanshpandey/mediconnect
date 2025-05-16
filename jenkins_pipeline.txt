@@ -1,14 +1,9 @@
 pipeline {
-    
     environment {
         registryCredential = 'dockerhub_id'
     }
-
- 
     agent any
-
     stages {
-    
         stage('Git Clone') {
             steps {
                 git branch: 'main', url: 'https://github.com/deepanshpandey/telemedicine'
@@ -66,9 +61,5 @@ pipeline {
                 ansiblePlaybook becomeUser: null, colorized: true, disableHostKeyChecking: true, installation: 'Ansible', inventory: './ansible_deployment/ansible_inventory', playbook: './ansible_deployment/ansible_deploy.yml', sudoUser: null
             }
         }
-        
-
     }
-}
-
-     
+} 
