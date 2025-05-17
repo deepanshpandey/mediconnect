@@ -24,6 +24,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'cd Backend/ && cp .env_deploy .env' 
+                sh 'export NODE_OPTIONS=--openssl-legacy-provider'
                 sh 'cd Frontend/ && ng build'
             }
         }
