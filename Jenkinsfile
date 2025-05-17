@@ -40,7 +40,10 @@ pipeline {
         }
         stage('Docker containerization') {
             steps {
-                sh 'docker compose up --build'
+                sh 'docker compose up --build -d'
+                timeout(time: 1, unit: 'MINUTES') {
+                sh 'docker compose down'
+        }
             }
         }
         stage('Rename Docker Image name to push on Docker Hub') {

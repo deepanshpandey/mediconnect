@@ -4,7 +4,7 @@
   tasks:
     - name: Shutdown ruuning application  
       shell:
-        cmd: cd  /tmp/ && docker-compose down || true
+        cmd: cd  /tmp/ && docker compose down || true
   
     - name: Copy docker-compose.yml file to remote machine
       copy: 
@@ -17,5 +17,7 @@
 
     - name: Spin up application using docker-compose 
       shell:
-        cmd: cd /tmp/ && docker-compose up -d  
+        # enable if actually want to run the command
+        # cmd: cd /tmp/ && docker compose up --build -d  
+        cmd: cd /tmp/
 
