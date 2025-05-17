@@ -1,10 +1,12 @@
+        # enable if actually want to run the command
 ---
 - name: Spin up application at remote machine
   hosts: all
   tasks:
-    - name: Shutdown ruuning application  
+    - name: Shutdown running application
       shell:
-        cmd: cd  /tmp/ && docker compose down || true
+        cmd: docker compose down || true
+        # cmd: cd  /tmp/ && docker compose down || true
   
     - name: Copy docker-compose.yml file to remote machine
       copy: 
@@ -13,11 +15,11 @@
 
     - name: Remove Previous Docker Images If Exists 
       shell:
-        cmd: docker rmi coffeeinacafe/mediconnect_webrtc_server  coffeeinacafe/mediconnect_frontend  coffeeinacafe/mediconnect_backend 2> /dev/null || true
+        cmd: docker ps -a
+        # cmd: docker rmi coffeeinacafe/mediconnect_webrtc_server  coffeeinacafe/mediconnect_frontend  coffeeinacafe/mediconnect_backend 2> /dev/null || true
 
     - name: Spin up application using docker-compose 
       shell:
-        # enable if actually want to run the command
+        cmd: docker ps -a
         # cmd: cd /tmp/ && docker compose up --build -d  
-        cmd: cd /tmp/
 
