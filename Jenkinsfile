@@ -55,10 +55,16 @@ pipeline {
         stage('Deploy on Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry( '', registryCredential ) {
-                        sh 'docker push coffeeinacafe/mediconnect-webrtc_server'
-                        sh 'docker push coffeeinacafe/mediconnect-frontend'
-                        sh 'docker push coffeeinacafe/mediconnect-backend'
+                    docker.withRegistry('', 'DockerHubCred') {
+                        sh 'docker tag mediconnect-webrtc_server coffeeinacafe/mediconnect-webrtc_server:latest'
+                        sh 'docker tag mediconnect-frontend coffeeinacafe/mediconnect-frontend:latest'
+                        sh 'docker tag mediconnect-backend coffeeinacafe/mediconnect-backend:latest'
+                        sh 'docker push coffeeinacafe/mediconnect-webrtc_server:latest'
+                        sh 'docker push coffeeinacafe/mediconnect-frontend:latest'
+                        sh 'docker push coffeeinacafe/mediconnect-backend:latest'
+                        // sh 'docker push coffeeinacafe/mediconnect-webrtc_server'
+                        // sh 'docker push coffeeinacafe/mediconnect-frontend'
+                        // sh 'docker push coffeeinacafe/mediconnect-backend'
                         sh 'docker compose down'
                     }
                 }
