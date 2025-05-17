@@ -35,7 +35,7 @@ pipeline {
         }
         stage('Docker containerization') {
             steps {
-                sh 'docker-compose build'
+                sh 'docker compose up --build'
             }
         }
         stage('Rename Docker Image name to push on Docker Hub') {
