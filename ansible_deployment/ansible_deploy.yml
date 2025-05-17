@@ -8,10 +8,10 @@
         cmd: docker compose down || true
         # cmd: cd  /tmp/ && docker compose down || true
   
-    - name: Copy docker-compose.yml file to remote machine
-      copy: 
-        src:  docker-compose.yml 
-        dest: /tmp/
+    # - name: Copy docker-compose.yml file to remote machine
+    #   copy: 
+    #     src:  docker-compose.yml 
+    #     dest: /tmp/
 
     - name: Remove Previous Docker Images If Exists 
       shell:
