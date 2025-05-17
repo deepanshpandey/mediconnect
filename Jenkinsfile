@@ -34,32 +34,32 @@ pipeline {
         }
         stage('Remove Previous Docker Images If Exists') {
             steps {
-                sh 'docker rmi mediconnect_webrtc_server mediconnect_frontend mediconnect_backend 2> /dev/null || true'
-                sh 'docker rmi coffeeinacafe/mediconnect_webrtc_server coffeeinacafe/mediconnect_frontend coffeeinacafe/mediconnect_backend 2> /dev/null || true'
+                sh 'docker rmi mediconnect-webrtc_server mediconnect-frontend mediconnect-backend 2> /dev/null || true'
+                sh 'docker rmi coffeeinacafe/mediconnect-webrtc_server coffeeinacafe/mediconnect-frontend coffeeinacafe/mediconnect-backend 2> /dev/null || true'
             }
         }
         stage('Docker containerization') {
             steps {
                 sh 'docker compose up --build -d'
                 timeout(time: 1, unit: 'MINUTES') {
-                sh 'docker compose down'
         }
             }
         }
         stage('Rename Docker Image name to push on Docker Hub') {
             steps {
-                sh 'docker tag mediconnect_webrtc_server coffeeinacafe/mediconnect_webrtc_server'
-                sh 'docker tag mediconnect_frontend coffeeinacafe/mediconnect_frontend'
-                sh 'docker tag mediconnect_backend coffeeinacafe/mediconnect_backend'
+                sh 'docker tag mediconnect-webrtc_server coffeeinacafe/mediconnect-webrtc_server'
+                sh 'docker tag mediconnect-frontend coffeeinacafe/mediconnect-frontend'
+                sh 'docker tag mediconnect-backend coffeeinacafe/mediconnect-backend'
             }
         }
         stage('Deploy on Docker Hub') {
             steps {
                 script {
                     docker.withRegistry( '', registryCredential ) {
-                        sh 'docker push coffeeinacafe/mediconnect_webrtc_server'
-                        sh 'docker push coffeeinacafe/mediconnect_frontend'
-                        sh 'docker push coffeeinacafe/mediconnect_backend'
+                        sh 'docker push coffeeinacafe/mediconnect-webrtc_server'
+                        sh 'docker push coffeeinacafe/mediconnect-frontend'
+                        sh 'docker push coffeeinacafe/mediconnect-backend'
+                        sh 'docker compose down'
                     }
                 }
             }
