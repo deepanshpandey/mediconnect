@@ -11,9 +11,9 @@ pipeline {
         }
         stage('Install dependancies') {
             steps {
-                sh 'cd Backend/ && npm i'
-                sh 'cd Frontend/ && npm i'
-                sh 'cd WebRTC_Signaling_Server/ && npm i'
+                sh 'cd Backend/ && npm i --legacy-peer-deps'
+                sh 'cd Frontend/ && npm i --legacy-peer-deps'
+                sh 'cd WebRTC_Signaling_Server/ && npm i --legacy-peer-deps'
             } 
         }
         stage('Test') {
