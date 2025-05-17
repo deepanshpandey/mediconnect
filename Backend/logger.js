@@ -1,7 +1,8 @@
-const { createLogger, format, transports } = require('winston');
+const { createLogger, format, transports, Transport } = require('winston');
 require('winston-daily-rotate-file');
 const fs = require('fs');
 const path = require('path');
+const net = require('net');
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -11,12 +12,68 @@ const datePatternConfiguration = {
   everHour: 'YYYY-MM-DD-HH',
   everMinute: 'YYYY-MM-DD-THH-mm',
 };
-numberOfDaysToKeepLog = 30;
-fileSizeToRotate = 1; // in megabyte
+const numberOfDaysToKeepLog = 30;
+const fileSizeToRotate = 1; // in megabyte
 
 // Create the log directory if it does not exist
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
+}
+
+// Custom Logstash TCP transport
+class LogstashTcpTransport extends Transport {
+  constructor(opts) {
+    super(opts);
+    this.host = opts.host || 'logstash';
+    this.port = opts.port || 5000;
+    this.connected = false;
+    this.queue = [];
+    this.connect();
+  }
+
+  connect() {
+    this.client = new net.Socket();
+
+    this.client.connect(this.port, this.host, () => {
+      this.connected = true;
+      // Flush queued logs
+      this.queue.forEach(log => this.client.write(log));
+      this.queue = [];
+    });
+
+    this.client.on('error', (err) => {
+      this.connected = false;
+      // Try reconnecting after 5 seconds
+      setTimeout(() => this.connect(), 5000);
+    });
+
+    this.client.on('close', () => {
+      this.connected = false;
+      setTimeout(() => this.connect(), 5000);
+    });
+  }
+
+  log(info, callback) {
+    setImmediate(() => {
+      this.emit('logged', info);
+    });
+
+    // Format log as JSON string with newline for Logstash json_lines codec
+    const message = JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: info.level,
+      message: info.message,
+      label: info.label
+    }) + '\n';
+
+    if (this.connected) {
+      this.client.write(message);
+    } else {
+      this.queue.push(message);
+    }
+
+    callback();
+  }
 }
 
 const dailyRotateFileTransport = new transports.DailyRotateFile({
@@ -28,7 +85,6 @@ const dailyRotateFileTransport = new transports.DailyRotateFile({
 });
 
 const logger = createLogger({
-  // change level if in dev environment versus production
   level: env === 'development' ? 'verbose' : 'info',
   handleExceptions: true,
   format: format.combine(
@@ -51,12 +107,13 @@ const logger = createLogger({
       ),
     }),
     dailyRotateFileTransport,
+    new LogstashTcpTransport({ host: process.env.LOGGING_HOST || 'logstash', port: parseInt(process.env.LOGGING_PORT) || 5000 }),
   ],
 });
 
 logger.stream = {
   write: (message) => {
-    logger.info(message);
+    logger.info(message.trim());
   },
 };
 

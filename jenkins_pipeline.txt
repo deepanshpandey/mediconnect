@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('Git Clone') {
             steps {
-                git branch: 'main', url: 'https://github.com/deepanshpandey/telemedicine'
+                git branch: 'main', url: 'https://github.com/deepanshpandey/mediconnect'
             }
         }
         stage('Install dependancies') {
@@ -29,8 +29,8 @@ pipeline {
         }
         stage('Remove Previous Docker Images If Exists') {
             steps {
-                sh 'docker rmi telemedicine_webrtc_server  telemedicine_frontend  telemedicine_backend 2> /dev/null || true'
-                sh 'docker rmi coffeeinacafe/telemedicine_webrtc_server  coffeeinacafe/telemedicine_frontend  coffeeinacafe/telemedicine_backend 2> /dev/null || true'
+                sh 'docker rmi mediconnect_webrtc_server mediconnect_frontend mediconnect_backend 2> /dev/null || true'
+                sh 'docker rmi coffeeinacafe/mediconnect_webrtc_server coffeeinacafe/mediconnect_frontend coffeeinacafe/mediconnect_backend 2> /dev/null || true'
             }
         }
         stage('Docker containerization') {
@@ -38,20 +38,20 @@ pipeline {
                 sh 'docker-compose build'
             }
         }
-        stage('Rename Docke Image name to push on Docker Hub') {
+        stage('Rename Docker Image name to push on Docker Hub') {
             steps {
-                sh 'docker tag telemedicine_webrtc_server coffeeinacafe/telemedicine_webrtc_server'
-                sh 'docker tag telemedicine_frontend coffeeinacafe/telemedicine_frontend'
-                sh 'docker tag telemedicine_backend coffeeinacafe/telemedicine_backend'
+                sh 'docker tag mediconnect_webrtc_server coffeeinacafe/mediconnect_webrtc_server'
+                sh 'docker tag mediconnect_frontend coffeeinacafe/mediconnect_frontend'
+                sh 'docker tag mediconnect_backend coffeeinacafe/mediconnect_backend'
             }
         }
         stage('Deploy on Docker Hub') {
             steps {
                 script {
                     docker.withRegistry( '', registryCredential ) {
-                      sh 'docker push coffeeinacafe/telemedicine_webrtc_server'
-                      sh 'docker push coffeeinacafe/telemedicine_frontend'
-                      sh 'docker push coffeeinacafe/telemedicine_backend'
+                        sh 'docker push coffeeinacafe/mediconnect_webrtc_server'
+                        sh 'docker push coffeeinacafe/mediconnect_frontend'
+                        sh 'docker push coffeeinacafe/mediconnect_backend'
                     }
                 }
             }
@@ -62,4 +62,4 @@ pipeline {
             }
         }
     }
-} 
+}
