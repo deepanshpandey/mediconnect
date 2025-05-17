@@ -23,9 +23,13 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'cd Backend/ && cp .env_deploy .env' 
-                sh 'export NODE_OPTIONS=--openssl-legacy-provider'
-                sh 'cd Frontend/ && ng build'
+                sh '''
+                    cd Backend/
+                    cp .env_deploy .env
+                    cd ../Frontend/
+                    export NODE_OPTIONS=--openssl-legacy-provider
+                    ng build
+                '''
             }
         }
         stage('Remove Previous Docker Images If Exists') {
