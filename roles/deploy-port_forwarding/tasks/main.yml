@@ -1,22 +1,22 @@
 - name: Port-forward backend
-  shell: nohup kubectl port-forward service/node-backend-service 3000:3000 > /tmp/backend.log 2>&1 &
+  shell: kubectl port-forward service/node-backend-service 3000:3000 > /tmp/backend.log &
   async: 1
   poll: 0
 
 - name: Port-forward frontend
-  shell: nohup kubectl port-forward service/frontend-web-service 8000:80 > /tmp/frontend.log 2>&1 &
+  shell: kubectl port-forward service/frontend-web-service 8000:80 > /tmp/frontend.log &
   async: 1
   poll: 0
 
 - name: Port-forward signaling server
-  shell: nohup kubectl port-forward service/webrtc-server-service 4440:4440 > /tmp/signaling.log 2>&1 &
+  shell: kubectl port-forward service/webrtc-server-service 4440:4440 > /tmp/signaling.log &
   async: 1
   poll: 0
 
-- name: Port-forward MYSQL
-  shell: nohup kubectl port-forward service/db-service 3300:3300 > /tmp/mysql.log 2>&1 &
-  async: 1
-  poll: 0
+# - name: Port-forward MYSQL
+#   shell: kubectl port-forward service/db-service 3300:3300 > /tmp/mysql.log &
+#   async: 1
+#   poll: 0
 
 #   # This is for the logging application
 # - name: port-forward for logstash

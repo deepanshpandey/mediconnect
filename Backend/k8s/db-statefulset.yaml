@@ -17,12 +17,12 @@ spec:
         - name: mysql-db
           image: mysql:8
           imagePullPolicy: IfNotPresent
-          args: ["--port=3300"]
+          args: ["--port=3306"]
           ports:
-            - containerPort: 3300
+            - containerPort: 3306
           env:
             - name: MYSQL_TCP_PORT
-              value: "3300"
+              value: "3306"
             - name: MYSQL_ROOT_PASSWORD
               value: "rootroot"
             - name: MYSQL_USER
@@ -56,7 +56,7 @@ spec:
     app: mysql-db
   ports:
     - protocol: TCP
-      port: 3300
-      targetPort: 3300
+      port: 3306
+      targetPort: 3306
   type: ClusterIP
 ---

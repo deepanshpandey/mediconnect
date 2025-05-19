@@ -29,18 +29,18 @@ spec:
             - name: MYSQL_DATABASE
               value: "mediconnect"
             - name: DB_PORT
-              value: "3300"
-            - name: LOGGING_HOST
-              value: "logstash"  # Assumes a logstash service exists
-            - name: LOGGING_PORT
-              value: "5000"
+              value: "3306"
+            # - name: LOGGING_HOST
+            #   value: "logstash"  # Assumes a logstash service exists
+            # - name: LOGGING_PORT
+            #   value: "5000"
           resources:
             requests:
-              cpu: "1000m"
-              memory: "1Gi"
+              cpu: "2000m"
+              memory: "2Gi"
             limits:
               cpu: "5000m"
-              memory: "2Gi"
+              memory: "4Gi"
 ---
 apiVersion: v1
 kind: Service
