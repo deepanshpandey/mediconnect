@@ -41,7 +41,7 @@ pipeline {
         stage('Docker containerization') {
             steps {
                 sh 'docker compose up --build -d'
-                timeout(time: 1, unit: 'MINUTES') {
+                timeout(time: 2, unit: 'MINUTES') {
         }
             }
         }
