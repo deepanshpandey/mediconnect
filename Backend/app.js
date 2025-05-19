@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // === Prometheus Metrics Setup ===
-client.collectDefaultMetrics(); // Collect default Node.js metrics
+client.collectDefaultMetrics();
 
 const httpRequestDurationMicroseconds = new client.Histogram({
   name: 'http_request_duration_seconds',
@@ -22,13 +22,14 @@ const httpRequestDurationMicroseconds = new client.Histogram({
   buckets: [0.1, 0.3, 0.5, 1, 1.5, 2, 5],
 });
 
-// === Prometheus /metrics Endpoint ===
+// === /metrics Endpoint for Prometheus ===
 app.get('/metrics', async (req, res) => {
   try {
     res.set('Content-Type', client.register.contentType);
     res.end(await client.register.metrics());
   } catch (err) {
-    res.status(500).end(err);
+    logger.error('Error in /metrics endpoint:', err instanceof Error ? err.stack : JSON.stringify(err));
+    res.status(500).end('Metrics error');
   }
 });
 
@@ -38,7 +39,7 @@ app.get('/health', (req, res) => {
   res.status(isHealthy ? 200 : 500).json({ status: isHealthy ? 'ok' : 'db_error' });
 });
 
-// === Metrics Middleware (Exclude /metrics and /health) ===
+// === Metrics Middleware (excluding /metrics and /health) ===
 app.use((req, res, next) => {
   if (req.path === '/metrics' || req.path === '/health') return next();
 
@@ -56,7 +57,7 @@ app.use((req, res, next) => {
 // === API Routes ===
 app.use("/api/users", userRouter);
 
-// === MySQL Connection Handling ===
+// === MySQL Connection ===
 let con;
 
 function handleMySQLConnection() {
@@ -69,7 +70,7 @@ function handleMySQLConnection() {
 
   con.connect((err) => {
     if (err) {
-      logger.error('Initial MySQL connection failed. Retrying in 5 seconds...', err.message);
+      logger.error('Initial MySQL connection failed. Retrying in 5 seconds...', err.message || err);
       return setTimeout(handleMySQLConnection, 5000);
     }
 
@@ -78,7 +79,7 @@ function handleMySQLConnection() {
   });
 
   con.on('error', (err) => {
-    logger.error('MySQL error:', err.message);
+    logger.error('MySQL error:', err.message || err);
     if (err.code === 'PROTOCOL_CONNECTION_LOST') {
       handleMySQLConnection();
     } else {
@@ -90,7 +91,7 @@ function handleMySQLConnection() {
 function initializeDatabase() {
   const db = process.env.MYSQL_DATABASE;
   const run = (stmt) => con.query(stmt, (err) => {
-    if (err) logger.error('DB Init Error:', err.message);
+    if (err) logger.error('DB Init Error:', err.message || err);
   });
 
   run(`CREATE DATABASE IF NOT EXISTS \`${db}\``);
@@ -148,7 +149,7 @@ function initializeDatabase() {
   )`);
 }
 
-// === Initialize MySQL ===
+// === Initialize MySQL Connection ===
 handleMySQLConnection();
 
 // === Start Server ===
@@ -157,11 +158,11 @@ app.listen(port, () => {
   logger.info(`Backend up and running on PORT : ${port}`);
 });
 
-// === Catch unhandled errors ===
+// === Safe Global Error Handlers ===
 process.on('uncaughtException', (err) => {
-  logger.error('UNCAUGHT EXCEPTION:', err.stack || err);
+  logger.error('UNCAUGHT EXCEPTION:', err instanceof Error ? err.stack : JSON.stringify(err));
 });
 
 process.on('unhandledRejection', (reason) => {
-  logger.error('UNHANDLED PROMISE REJECTION:', reason);
+  logger.error('UNHANDLED PROMISE REJECTION:', reason instanceof Error ? reason.stack : JSON.stringify(reason));
 });
