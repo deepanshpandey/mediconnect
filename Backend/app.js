@@ -1,9 +1,10 @@
-const logger = require('./logger');
-const client = require('prom-client');
-require("dotenv").config();
-const express = require("express");
-const cors = require('cors');
-const userRouter = require("./users/user.router");
+import logger from './logger.js';
+import client from 'prom-client';
+import dotenv from 'dotenv';
+dotenv.config();
+import express from 'express';
+import cors from 'cors';
+import userRouter from "./users/user.router.js";
 
 const app = express();
 app.use(cors());
@@ -35,8 +36,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Prometheus metrics endpoint
-app.get('/metrics', async (req, res) => {
+app.get('/metrics', async (_req, res) => {
   try {
     res.set('Content-Type', client.register.contentType);
     res.end(await client.register.metrics());
@@ -46,8 +46,7 @@ app.get('/metrics', async (req, res) => {
   }
 });
 
-// Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   if (con && con.state === 'authenticated') {
     res.status(200).send('OK');
   } else {
@@ -59,25 +58,40 @@ app.get('/health', (req, res) => {
 // === MYSQL CONNECTION HANDLER WITH RETRY ===
 const mysql = require('mysql2');
 let con;
-
 function handleMySQLConnection() {
-  con = mysql.createConnection({
+  const dbConfig = {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PWD,
-    database: process.env.MYSQL_DATABASE
-  });
+  };
+
+  // Connect without the database to ensure the DB exists
+  con = mysql.createConnection(dbConfig);
 
   con.connect((err) => {
     if (err) {
       logger.error('Initial MySQL connection failed. Retrying in 5 seconds...', err.message);
-      setTimeout(handleMySQLConnection, 5000); // Retry after delay
+      return setTimeout(handleMySQLConnection, 5000); // Retry after delay
     } else {
-      logger.info('Connected to MySQL database.');
-      // Create tables if not exist
-      initializeDatabase();
+      // Create the database if it does not exist, then switch to it
+      con.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.MYSQL_DATABASE}\`;`, (err) => {
+        if (err) {
+          logger.error('Error creating database:', err.message);
+          return setTimeout(handleMySQLConnection, 5000);
+        }
+        con.changeUser({database: process.env.MYSQL_DATABASE}, (err) => {
+          if (err) {
+            logger.error('Error switching to the database:', err.message);
+            return setTimeout(handleMySQLConnection, 5000);
+          }
+          logger.info('Connected to MySQL database.');
+          // Create tables if not exist
+          initializeDatabase();
+        });
+      });
     }
   });
+}
 
   con.on('error', (err) => {
     logger.error('MySQL error: ', err.message);
@@ -87,7 +101,6 @@ function handleMySQLConnection() {
       throw err;
     }
   });
-}
 
 // === Create DB & Tables ===
 function initializeDatabase() {
