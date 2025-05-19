@@ -17,15 +17,20 @@ spec:
         - name: mysql-db
           image: mysql:8
           imagePullPolicy: IfNotPresent
+          args: ["--port=3300"]
           ports:
-            - containerPort: 3306
+            - containerPort: 3300
           env:
+            - name: MYSQL_TCP_PORT
+              value: "3300"
             - name: MYSQL_ROOT_PASSWORD
+              value: "rootroot"
+            - name: MYSQL_USER
+              value: "testuser"
+            - name: MYSQL_PASSWORD
               value: "rootroot"
             - name: MYSQL_DATABASE
               value: "mediconnect"
-            - name: MYSQL_USER
-              value: "testuser"
             - name: MYSQL_ROOT_HOST
               value: "%"
           volumeMounts:
@@ -39,7 +44,7 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 1Gi
+            storage: 2Gi
 
 ---
 apiVersion: v1
@@ -51,7 +56,7 @@ spec:
     app: mysql-db
   ports:
     - protocol: TCP
-      port: 3306
-      targetPort: 3306
+      port: 3300
+      targetPort: 3300
   type: ClusterIP
 ---

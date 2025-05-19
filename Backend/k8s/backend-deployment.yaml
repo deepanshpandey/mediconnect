@@ -22,11 +22,13 @@ spec:
             - name: DB_HOST
               value: "db-service"  # Same service name used for MySQL
             - name: DB_USER
-              value: "root"
+              value: "testuser"
             - name: DB_PWD
               value: "rootroot"
-            - name: MYSQL_DB
+            - name: MYSQL_DATABASE
               value: "mediconnect"
+            - name: DB_PORT
+              value: "3300"
             - name: LOGGING_HOST
               value: "logstash"  # Assumes a logstash service exists
             - name: LOGGING_PORT
