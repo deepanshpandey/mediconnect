@@ -1,0 +1,12 @@
+---
+# Deploy WebRTC_Signaling_Server to Kubernetes
+- name: Deploy WebRTC_Signaling_Server
+  command: kubectl apply -f webrtc-signaling-deployment.yaml
+  args:
+    chdir: WebRTC_Signaling_Server/k8s
+
+# Deploy WebRTC_Signaling_Server HPA
+- name: Deploy WebRTC_Signaling_Server HPA
+  command: kubectl apply -f webrtc-signaling-hpa.yaml
+  args:
+    chdir: WebRTC_Signaling_Server/k8s
