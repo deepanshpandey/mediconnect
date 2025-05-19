@@ -12,9 +12,10 @@ spec:
       labels:
         app: node-backend
     spec:
+      restartPolicy: Always
       containers:
         - name: node-backend
-          image: coffeeinacafe/mediconnect-backend:latest  # Replace with your actual image name
+          image: coffeeinacafe/mediconnect-backend:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
