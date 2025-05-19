@@ -7,3 +7,4 @@
         kubectl delete all --all
         kubectl delete pvc --all
         kubectl delete hpa --all
+        pkill -f "kubectl port-forward"
