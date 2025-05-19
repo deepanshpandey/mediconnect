@@ -67,7 +67,6 @@ pipeline {
                 }
             }
         }
-        stages {
         stage('Deploy with ansible') {
             steps {
                 sh 'echo "1234" > vault_pass.txt'
@@ -84,6 +83,5 @@ pipeline {
                 sh 'rm -f vault_pass.txt'
             }
         }
-    }
     }
 }
