@@ -1,13 +1,24 @@
 # Open Grafana and Prometheus via Minikube services
 - name: Open Grafana service in browser (async)
   shell: nohup minikube service monitoring-grafana -n monitoring &
+  register: grafana_service
   async: 30
   poll: 0
 
 - name: Open Prometheus service in browser (async)
   shell: nohup minikube service monitoring-kube-prometheus-prometheus -n monitoring &
+  register: prometheus_service
   async: 30
   poll: 0
+
+# Show process IDs
+- name: Show Grafana process ID
+  debug:
+    var: grafana_service
+
+- name: Show Prometheus process ID
+  debug:
+    var: prometheus_service
 
 # Get Grafana admin password
 - name: Get Grafana password
