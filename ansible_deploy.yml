@@ -10,7 +10,6 @@
     docker_user: coffeeinacafe
   roles:
     - pull-docker-images
-    # - deploy-combined_backend
     - deploy-database
     - wait
     - deploy-backend
@@ -19,4 +18,3 @@
     - wait
     - deploy-WebRTC_Signaling_Server
     - deploy-port_forwarding
-    # - deploy-logging

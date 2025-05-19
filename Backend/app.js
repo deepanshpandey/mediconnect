@@ -4,6 +4,20 @@ const express = require("express");
 const cors = require('cors');
 const userRouter = require("./users/user.router");
 
+const client = require('prom-client');
+
+// Enable collection of default metrics (CPU, memory, event loop lag, etc.)
+client.collectDefaultMetrics();
+
+// Create a custom histogram metric for request duration
+const httpRequestDurationMicroseconds = new client.Histogram({
+  name: 'http_request_duration_seconds',
+  help: 'Duration of HTTP requests in seconds',
+  labelNames: ['method', 'route', 'status_code'],
+  buckets: [0.1, 0.3, 0.5, 1, 1.5, 2, 5] // Adjust based on typical request times
+});
+
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -16,6 +30,31 @@ app.get('/health', (req, res) => {
     res.status(500).send('DB not connected');
   }
 });
+
+// === Middleware to measure request duration ===
+app.use((req, res, next) => {
+  const end = httpRequestDurationMicroseconds.startTimer();
+  res.on('finish', () => {
+    end({
+      method: req.method,
+      route: req.route?.path || req.path,
+      status_code: res.statusCode
+    });
+  });
+  next();
+});
+
+
+// === Prometheus Metrics Endpoint ===
+app.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', client.register.contentType);
+    res.end(await client.register.metrics());
+  } catch (ex) {
+    res.status(500).end(ex);
+  }
+});
+
 
 
 // === MYSQL CONNECTION HANDLER WITH RETRY ===

@@ -14,15 +14,10 @@ spec:
     spec:
       containers:
         - name: webrtc-server
-          image: coffeeinacafe/mediconnect-webrtc_server:latest  # Replace with your image name
+          image: coffeeinacafe/mediconnect-webrtc_server:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 4440
-          env:
-            - name: LOGGING_HOST
-              value: "logstash"  # Assumes logstash service exists in the cluster
-            - name: LOGGING_PORT
-              value: "5000"
           resources:
             requests:
               cpu: "1000m"

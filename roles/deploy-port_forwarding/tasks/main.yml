@@ -39,21 +39,3 @@
 - name: Debug frontend port-forward
   debug:
     var: frontend_pf
-
-
-# - name: Port-forward MYSQL
-#   shell: kubectl port-forward service/db-service 3300:3300 > /tmp/mysql.log &
-#   async: 1
-#   poll: 0
-
-#   # This is for the logging application
-# - name: port-forward for logstash
-#   command: kubectl port-forward service/logstash-service 5000:5000
-# - name: port-forward for backend logging
-#   command: kubectl port-forward service/node-backend-service 5000:5000
-# - name: port-forward for logstash monitoring
-#   command: kubectl port-forward service/logstash-monitoring-service 9600:9600
-# - name: port-forward for elasticsearch
-#   command: kubectl port-forward service/elasticsearch-service 9200:9200
-# - name: port-forward for kibana
-#   command: kubectl port-forward service/kibana-service 5601:5601

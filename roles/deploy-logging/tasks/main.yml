@@ -1,4 +1,0 @@
-- name: Deploy Logging Application
-  command: kubectl apply -f elk-deployment.yaml
-  args:
-    chdir: ELK/

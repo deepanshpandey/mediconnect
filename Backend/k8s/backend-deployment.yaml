@@ -21,7 +21,7 @@ spec:
             - containerPort: 3000
           env:
             - name: DB_HOST
-              value: "db-service"  # Same service name used for MySQL
+              value: "db-service"
             - name: DB_USER
               value: "testuser"
             - name: DB_PWD
@@ -30,10 +30,6 @@ spec:
               value: "mediconnect"
             - name: DB_PORT
               value: "3306"
-            # - name: LOGGING_HOST
-            #   value: "logstash"  # Assumes a logstash service exists
-            # - name: LOGGING_PORT
-            #   value: "5000"
           resources:
             requests:
               cpu: "500m"
@@ -46,6 +42,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: node-backend-service
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "3000"
 spec:
   selector:
     app: node-backend
