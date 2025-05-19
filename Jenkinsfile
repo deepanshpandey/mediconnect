@@ -72,7 +72,7 @@ pipeline {
         }
         stage('Deploy with ansible') {
             steps {
-                ansiblePlaybook becomeUser: null, colorized: true, disableHostKeyChecking: true, installation: 'Ansible', inventory: './ansible_deployment/ansible_inventory', playbook: './ansible_deployment/ansible_deploy.yml', sudoUser: null
+                ansiblePlaybook becomeUser: null, colorized: true, disableHostKeyChecking: true, installation: 'Ansible', inventory: './ansible_inventory', playbook: './ansible_deploy.yml', sudoUser: null
             }
         }
     }

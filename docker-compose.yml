@@ -20,7 +20,7 @@ services:
     restart: always
     build: ./Frontend/
     ports:
-      - "4200:4200"
+      - "4200:80"
     depends_on:
       - backend
       - webrtc_server
