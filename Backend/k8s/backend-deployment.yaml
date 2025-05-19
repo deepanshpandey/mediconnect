@@ -16,7 +16,7 @@ spec:
       containers:
         - name: node-backend
           image: coffeeinacafe/mediconnect-backend:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           env:
