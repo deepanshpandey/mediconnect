@@ -18,3 +18,4 @@
     - wait
     - deploy-WebRTC_Signaling_Server
     - deploy-port_forwarding
+    - deploy-prom-graf

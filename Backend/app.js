@@ -1,38 +1,47 @@
-const logger = require('./logger');
-require("dotenv").config();
 const express = require("express");
-const cors = require('cors');
+const cors = require("cors");
+const dotenv = require("dotenv");
+const mysql = require("mysql2");
+const client = require("prom-client");
+const logger = require("./logger");
 const userRouter = require("./users/user.router");
 
-const client = require('prom-client');
-
-// Enable collection of default metrics (CPU, memory, event loop lag, etc.)
-client.collectDefaultMetrics();
-
-// Create a custom histogram metric for request duration
-const httpRequestDurationMicroseconds = new client.Histogram({
-  name: 'http_request_duration_seconds',
-  help: 'Duration of HTTP requests in seconds',
-  labelNames: ['method', 'route', 'status_code'],
-  buckets: [0.1, 0.3, 0.5, 1, 1.5, 2, 5] // Adjust based on typical request times
-});
-
+dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use("/api/users", userRouter);
 
-app.get('/health', (req, res) => {
-  if (con && con.state === 'authenticated') {
-    res.status(200).send('OK');
-  } else {
-    res.status(500).send('DB not connected');
+// === Prometheus Metrics Setup ===
+client.collectDefaultMetrics(); // Collect default Node.js metrics
+
+const httpRequestDurationMicroseconds = new client.Histogram({
+  name: 'http_request_duration_seconds',
+  help: 'Duration of HTTP requests in seconds',
+  labelNames: ['method', 'route', 'status_code'],
+  buckets: [0.1, 0.3, 0.5, 1, 1.5, 2, 5],
+});
+
+// === Prometheus /metrics Endpoint ===
+app.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', client.register.contentType);
+    res.end(await client.register.metrics());
+  } catch (err) {
+    res.status(500).end(err);
   }
 });
 
-// === Middleware to measure request duration ===
+// === Health Check Endpoint ===
+app.get('/health', (req, res) => {
+  const isHealthy = con && con.state === 'authenticated';
+  res.status(isHealthy ? 200 : 500).json({ status: isHealthy ? 'ok' : 'db_error' });
+});
+
+// === Metrics Middleware (Exclude /metrics and /health) ===
 app.use((req, res, next) => {
+  if (req.path === '/metrics' || req.path === '/health') return next();
+
   const end = httpRequestDurationMicroseconds.startTimer();
   res.on('finish', () => {
     end({
@@ -44,21 +53,10 @@ app.use((req, res, next) => {
   next();
 });
 
+// === API Routes ===
+app.use("/api/users", userRouter);
 
-// === Prometheus Metrics Endpoint ===
-app.get('/metrics', async (req, res) => {
-  try {
-    res.set('Content-Type', client.register.contentType);
-    res.end(await client.register.metrics());
-  } catch (ex) {
-    res.status(500).end(ex);
-  }
-});
-
-
-
-// === MYSQL CONNECTION HANDLER WITH RETRY ===
-const mysql = require('mysql2');
+// === MySQL Connection Handling ===
 let con;
 
 function handleMySQLConnection() {
@@ -72,29 +70,28 @@ function handleMySQLConnection() {
   con.connect((err) => {
     if (err) {
       logger.error('Initial MySQL connection failed. Retrying in 5 seconds...', err.message);
-      setTimeout(handleMySQLConnection, 5000); // Retry after delay
-    } else {
-      logger.info('Connected to MySQL database.');
-
-      // Create tables if not exist
-      initializeDatabase();
+      return setTimeout(handleMySQLConnection, 5000);
     }
+
+    logger.info('Connected to MySQL database.');
+    initializeDatabase();
   });
 
   con.on('error', (err) => {
-    logger.error('MySQL error: ', err.message);
+    logger.error('MySQL error:', err.message);
     if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-      handleMySQLConnection(); // Retry on lost connection
+      handleMySQLConnection();
     } else {
       throw err;
     }
   });
 }
 
-// === Create DB & Tables ===
 function initializeDatabase() {
   const db = process.env.MYSQL_DATABASE;
-  const run = (stmt) => con.query(stmt, (err) => { if (err) logger.error(err); });
+  const run = (stmt) => con.query(stmt, (err) => {
+    if (err) logger.error('DB Init Error:', err.message);
+  });
 
   run(`CREATE DATABASE IF NOT EXISTS \`${db}\``);
 
@@ -151,16 +148,16 @@ function initializeDatabase() {
   )`);
 }
 
-// Initialize MySQL
+// === Initialize MySQL ===
 handleMySQLConnection();
 
-// === Express Listener ===
+// === Start Server ===
 const port = process.env.APP_PORT || 3000;
 app.listen(port, () => {
   logger.info(`Backend up and running on PORT : ${port}`);
 });
 
-// === Optional: Handle unexpected exceptions gracefully ===
+// === Catch unhandled errors ===
 process.on('uncaughtException', (err) => {
   logger.error('UNCAUGHT EXCEPTION:', err.stack || err);
 });

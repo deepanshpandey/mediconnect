@@ -1,0 +1,19 @@
+# Open Grafana and Prometheus via Minikube services
+- name: Open Grafana service in browser (async)
+  shell: nohup minikube service monitoring-grafana -n monitoring &
+  async: 30
+  poll: 0
+
+- name: Open Prometheus service in browser (async)
+  shell: nohup minikube service monitoring-kube-prometheus-prometheus -n monitoring &
+  async: 30
+  poll: 0
+
+# Get Grafana admin password
+- name: Get Grafana password
+  shell: kubectl get secret -n monitoring monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
+  register: grafana_password
+
+- name: Show Grafana password
+  debug:
+    var: grafana_password.stdout
