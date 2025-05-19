@@ -62,9 +62,6 @@ pipeline {
                         sh 'docker push coffeeinacafe/mediconnect-webrtc_server:latest'
                         sh 'docker push coffeeinacafe/mediconnect-frontend:latest'
                         sh 'docker push coffeeinacafe/mediconnect-backend:latest'
-                        // sh 'docker push coffeeinacafe/mediconnect-webrtc_server'
-                        // sh 'docker push coffeeinacafe/mediconnect-frontend'
-                        // sh 'docker push coffeeinacafe/mediconnect-backend'
                         sh 'docker compose down'
                     }
                 }
