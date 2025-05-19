@@ -14,7 +14,8 @@ pipeline {
                 sh 'cd Backend/ && npm i --legacy-peer-deps'
                 sh 'cd Frontend/ && npm i --legacy-peer-deps'
                 sh 'cd WebRTC_Signaling_Server/ && npm i --legacy-peer-deps'
-                //remove existing running contaienrs if exists
+                //remove existing running containers if exists
+                sh 'minikube delete' //delete existing minikube instance if exists
                 sh 'docker stop $(docker ps -q)'
                 sh 'minikube start' //since we are using minikube, we need to start it first
 
