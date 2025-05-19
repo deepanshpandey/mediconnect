@@ -17,7 +17,7 @@ const con = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PWD,
-  database: process.env.MYSQL_DB
+  database: process.env.MYSQL_DATABASE
 });
 
 con.connect((err) => {
@@ -33,11 +33,11 @@ con.connect((err) => {
 con.connect(function (err) {
   if (err) throw err;
 
-  con.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.MYSQL_DB}\``, function (err, result) {
+  con.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.MYSQL_DATABASE}\``, function (err, result) {
     if (err) throw err;
   });
 
-  stmt = `CREATE TABLE IF NOT EXISTS \`${process.env.MYSQL_DB}\`.\`user_doctor\` (` +
+  stmt = `CREATE TABLE IF NOT EXISTS \`${process.env.MYSQL_DATABASE}\`.\`user_doctor\` (` +
   "`id` INT NOT NULL AUTO_INCREMENT," +
   "`firstname` VARCHAR(45) NOT NULL," +
   "`lastname` VARCHAR(45) NULL," +
@@ -54,7 +54,7 @@ con.connect(function (err) {
     if (err) throw err;
   });
 
-  stmt = `CREATE TABLE IF NOT EXISTS \`${process.env.MYSQL_DB}\`.\`user_patient\` (` +
+  stmt = `CREATE TABLE IF NOT EXISTS \`${process.env.MYSQL_DATABASE}\`.\`user_patient\` (` +
   "`id` INT NOT NULL AUTO_INCREMENT," +
   "`firstname` VARCHAR(45) NOT NULL," +
   "`lastname` VARCHAR(45) NULL," +
@@ -69,7 +69,7 @@ con.connect(function (err) {
   });
 
 
-  stmt = `CREATE TABLE IF NOT EXISTS \`${process.env.MYSQL_DB}\`.\`pending_calls\` (` +
+  stmt = `CREATE TABLE IF NOT EXISTS \`${process.env.MYSQL_DATABASE}\`.\`pending_calls\` (` +
     "`id` INT NOT NULL AUTO_INCREMENT," +
     "`roomid` VARCHAR(45) NOT NULL," +
     "`doctor_id` INT NOT NULL," +
@@ -91,7 +91,7 @@ con.connect(function (err) {
       });
     
 
-      stmt = `CREATE TABLE IF NOT EXISTS \`${process.env.MYSQL_DB}\`.\`prescription\` (` +   
+      stmt = `CREATE TABLE IF NOT EXISTS \`${process.env.MYSQL_DATABASE}\`.\`prescription\` (` +   
       "`id` INT NOT NULL AUTO_INCREMENT," +
       "`details` TEXT(1000) NULL," +
       "`doctor_id` INT NOT NULL," +

@@ -7,7 +7,7 @@ module.exports = {
         if (data.role === 'Doctor') {
             let namespace_id = nanoid(16);
             pool.query(
-                `insert into ${process.env.MYSQL_DB}.\`user_doctor\`(firstName, lastName, email, password, namespace_id, specialization) 
+                `insert into ${process.env.MYSQL_DATABASE}.\`user_doctor\`(firstName, lastName, email, password, namespace_id, specialization) 
                         values(?,?,?,?,?,?)`,
                 [
                     data.firstname,
@@ -26,7 +26,7 @@ module.exports = {
             );
         } else {
             pool.query(
-                `insert into ${process.env.MYSQL_DB}.\`user_patient\`(firstName, lastName, email, password) 
+                `insert into ${process.env.MYSQL_DATABASE}.\`user_patient\`(firstName, lastName, email, password) 
                 values(?,?,?,?)`,
                 [
                     data.firstname,
@@ -46,7 +46,7 @@ module.exports = {
     getUserByUserEmail: async (data, callBack) => {
         if (data.role === "Doctor") {
             pool.query(
-                `select * from ${process.env.MYSQL_DB}.\`user_doctor\` where email = ?`,
+                `select * from ${process.env.MYSQL_DATABASE}.\`user_doctor\` where email = ?`,
                 [data.email],
                 (error, results, fields) => {
                     if (error) {
@@ -60,7 +60,7 @@ module.exports = {
             );
         } else {
             pool.query(
-                `select * from ${process.env.MYSQL_DB}.\`user_patient\` where email = ?`,
+                `select * from ${process.env.MYSQL_DATABASE}.\`user_patient\` where email = ?`,
                 [data.email],
                 (error, results, fields) => {
                     if (error) {
@@ -77,7 +77,7 @@ module.exports = {
     },
     getDoctorsBySpecialization: (specialization, callBack) => {
         pool.query(
-            `select id, firstName, lastName, namespace_id from ${process.env.MYSQL_DB}.user_doctor where specialization = ?`,
+            `select id, firstName, lastName, namespace_id from ${process.env.MYSQL_DATABASE}.user_doctor where specialization = ?`,
             [specialization],
             (error, results, fields) => {
                 if (error) {
@@ -89,7 +89,7 @@ module.exports = {
     },
     addToWaitListService: (data, callBack) => {
         pool.query(
-            `insert into ${process.env.MYSQL_DB}.pending_calls (roomid, doctor_id, patient_id) 
+            `insert into ${process.env.MYSQL_DATABASE}.pending_calls (roomid, doctor_id, patient_id) 
                 values(?,?,?)`,
             [
                 data.room_id,
@@ -106,7 +106,7 @@ module.exports = {
     },
     removePatientFromWaitlistService: (data, callBack) => {
         pool.query(
-            `DELETE FROM ${process.env.MYSQL_DB}.pending_calls WHERE (\`roomid\` = ?)`,
+            `DELETE FROM ${process.env.MYSQL_DATABASE}.pending_calls WHERE (\`roomid\` = ?)`,
             [data.room_id],
             (error, results, fields) => {
                 if (error) {
@@ -118,7 +118,7 @@ module.exports = {
     },
     addPrescriptionService: (data, callBack) => {
         pool.query(
-            `insert into ${process.env.MYSQL_DB}.prescription (details, doctor_id, patient_id) 
+            `insert into ${process.env.MYSQL_DATABASE}.prescription (details, doctor_id, patient_id) 
                 values(?,?,?)`,
             [
                 data.details,
@@ -135,7 +135,7 @@ module.exports = {
     },
     getPrescriptionService: (data, callBack) => {
         pool.query(
-            `SELECT details FROM ${process.env.MYSQL_DB}.prescription where doctor_id = ? and patient_id = ?`,
+            `SELECT details FROM ${process.env.MYSQL_DATABASE}.prescription where doctor_id = ? and patient_id = ?`,
             [
                 data.doctor_id,
                 data.patient_id
@@ -150,7 +150,7 @@ module.exports = {
     },
     getWaitingPatientsService: (data, callBack) => {
         pool.query(
-            `SELECT PC.id, PC.roomid, PC.patient_id, UP.firstname, UP.lastname FROM ${process.env.MYSQL_DB}.user_patient as UP, ${process.env.MYSQL_DB}.pending_calls as PC where UP.id = PC.patient_id and doctor_id = ?`,
+            `SELECT PC.id, PC.roomid, PC.patient_id, UP.firstname, UP.lastname FROM ${process.env.MYSQL_DATABASE}.user_patient as UP, ${process.env.MYSQL_DATABASE}.pending_calls as PC where UP.id = PC.patient_id and doctor_id = ?`,
             [data.doctor_id],
             (error, results, fields) => {
                 if (error) {
@@ -162,7 +162,7 @@ module.exports = {
     },
     getUsers: callBack => {
         pool.query(
-            `select id,firstName,lastName,email,role from ${process.env.MYSQL_DB}.users`,
+            `select id,firstName,lastName,email,role from ${process.env.MYSQL_DATABASE}.users`,
             [],
             (error, results, fields) => {
                 if (error) {
@@ -178,7 +178,7 @@ module.exports = {
             // If password also needs to be changed.
             if (data.password) {
                 pool.query(
-                    `update ${process.env.MYSQL_DB}.user_doctor set firstName=?, lastName=?, email=?, password=?, specialization=? where id = ?`,
+                    `update ${process.env.MYSQL_DATABASE}.user_doctor set firstName=?, lastName=?, email=?, password=?, specialization=? where id = ?`,
                     [
                         data.firstname,
                         data.lastname,
@@ -197,7 +197,7 @@ module.exports = {
             }
             else {
                 pool.query(
-                    `update ${process.env.MYSQL_DB}.user_doctor set firstName=?, lastName=?, email=?, specialization=? where id = ?`,
+                    `update ${process.env.MYSQL_DATABASE}.user_doctor set firstName=?, lastName=?, email=?, specialization=? where id = ?`,
                     [
                         data.firstname,
                         data.lastname,
@@ -218,7 +218,7 @@ module.exports = {
             // If password also needs to be changed.
             if (data.password) {
                 pool.query(
-                    `update ${process.env.MYSQL_DB}.user_patient set firstName=?, lastName=?, email=?, password=? where id = ?`,
+                    `update ${process.env.MYSQL_DATABASE}.user_patient set firstName=?, lastName=?, email=?, password=? where id = ?`,
                     [
                         data.firstname,
                         data.lastname,
@@ -236,7 +236,7 @@ module.exports = {
             }
             else {
                 pool.query(
-                    `update ${process.env.MYSQL_DB}.user_patient set firstName=?, lastName=?, email=? where id = ?`,
+                    `update ${process.env.MYSQL_DATABASE}.user_patient set firstName=?, lastName=?, email=? where id = ?`,
                     [
                         data.firstname,
                         data.lastname,
@@ -257,7 +257,7 @@ module.exports = {
     deleteUser: (data, callBack) => {
         if (data.role === 'Doctor') {
             pool.query(
-                `delete from ${process.env.MYSQL_DB}.user_doctor where id = ?`,
+                `delete from ${process.env.MYSQL_DATABASE}.user_doctor where id = ?`,
                 [data.id],
                 (error, results, fields) => {
                     if (error) {
@@ -269,7 +269,7 @@ module.exports = {
         }
         else {
             pool.query(
-                `delete from ${process.env.MYSQL_DB}.user_patient where id = ?`,
+                `delete from ${process.env.MYSQL_DATABASE}.user_patient where id = ?`,
                 [data.id],
                 (error, results, fields) => {
                     if (error) {
