@@ -15,7 +15,7 @@ pipeline {
                 sh 'cd Frontend/ && npm i --legacy-peer-deps'
                 sh 'cd WebRTC_Signaling_Server/ && npm i --legacy-peer-deps'
             }
-        }
+        // }
         // stage('Refresh docker and Minikube') {
         //     steps {
         //         sh '''
@@ -87,17 +87,14 @@ pipeline {
         }
         stage('Deploy with ansible') {
             steps {
-                sh 'echo "1234" > vault_pass.txt'
-
-                ansiblePlaybook(
-                    installation: 'Ansible',
-                    inventory: './ansible_inventory',
-                    playbook: './ansible_deploy.yml',
-                    extras: '--vault-password-file vault_pass.txt',
-                    colorized: true,
-                    disableHostKeyChecking: true
-                )
-                sh 'rm -f vault_pass.txt'
+                // Run a shell block as the 'deepanshpandey' user
+                sh '''
+                    sudo -u deepanshpandey bash -c '
+                        echo "1234" > vault_pass.txt
+                        ansible-playbook -i ./ansible_inventory ./ansible_deploy.yml --vault-password-file vault_pass.txt
+                        rm -f vault_pass.txt
+                    '
+                '''
             }
         }
     }
