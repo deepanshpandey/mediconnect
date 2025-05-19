@@ -9,6 +9,15 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/users", userRouter);
 
+app.get('/health', (req, res) => {
+  if (con && con.state === 'authenticated') {
+    res.status(200).send('OK');
+  } else {
+    res.status(500).send('DB not connected');
+  }
+});
+
+
 // === MYSQL CONNECTION HANDLER WITH RETRY ===
 const mysql = require('mysql2');
 let con;

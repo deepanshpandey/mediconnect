@@ -12,11 +12,11 @@
     - pull-docker-images
     # - deploy-combined_backend
     - deploy-database
-    - wait-5
-    - wait-5
-    - wait-5
+    - wait
     - deploy-backend
+    - wait
     - deploy-frontend
+    - wait
     - deploy-WebRTC_Signaling_Server
     - deploy-port_forwarding
     # - deploy-logging

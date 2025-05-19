@@ -10,3 +10,4 @@
   command: kubectl apply -f frontend-hpa.yaml
   args:
     chdir: Frontend/k8s
+    
