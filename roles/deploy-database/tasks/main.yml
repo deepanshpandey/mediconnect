@@ -1,0 +1,6 @@
+---
+# Deploy MySQL StatefulSet to Kubernetes
+- name: Deploy MySQL StatefulSet to Kubernetes
+  command: kubectl apply -f db-statefulset.yaml
+  args:
+    chdir: Backend/k8s

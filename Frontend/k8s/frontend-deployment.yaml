@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: Frontend-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: Frontend-web
+  template:
+    metadata:
+      labels:
+        app: Frontend-web
+    spec:
+      containers:
+        - name: Frontend-web
+          image: coffeeinacafe/mediconnect-frontend:latest
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          ports:
+            - containerPort: 4200 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: Frontend-web-service
+spec:
+  selector:
+    app: Frontend-web
+  ports:
+    - protocol: TCP
+      port: 4200
+      targetPort: 4200
+      nodePort: 30004
+  type: NodePort

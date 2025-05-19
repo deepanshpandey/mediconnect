@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webrtc-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webrtc-server
+  template:
+    metadata:
+      labels:
+        app: webrtc-server
+    spec:
+      containers:
+        - name: webrtc-server
+          image: coffeeinacafe/mediconnect-webrtc_server:latest  # Replace with your image name
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4440
+          env:
+            - name: LOGGING_HOST
+              value: "logstash"  # Assumes logstash service exists in the cluster
+            - name: LOGGING_PORT
+              value: "5000"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webrtc-server-service
+spec:
+  selector:
+    app: webrtc-server
+  ports:
+    - protocol: TCP
+      port: 4440
+      targetPort: 4440
+      nodePort: 30003
+  type: NodePort

@@ -1,0 +1,12 @@
+---
+# Deploy Backend Application to Kubernetes
+- name: Deploy Backend Application
+  command: kubectl apply -f backend-deployment.yaml
+  args:
+    chdir: Backend/k8s
+
+# Deploy Backend Horizontal Pod Autoscaler
+- name: Deploy Backend Horizontal Pod Autoscaler
+  command: kubectl apply -f backend-hpa.yaml
+  args:
+    chdir: Backend/k8s

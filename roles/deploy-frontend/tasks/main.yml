@@ -1,0 +1,12 @@
+---
+# Deploy Frontend Application to Kubernetes
+- name: Deploy Frontend Application
+  command: kubectl apply -f frontend-deployment.yaml
+  args:
+    chdir: Frontend/k8s
+
+# Deploy Frontend Horizontal Pod Autoscaler
+- name: Deploy Frontend Horizontal Pod Autoscaler
+  command: kubectl apply -f frontend-hpa.yaml
+  args:
+    chdir: Frontend/k8s

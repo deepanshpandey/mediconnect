@@ -1,0 +1,13 @@
+- name: Spin up application at remote machine
+  hosts: all
+  become: true
+  vars_files:
+    - my_vault.yml
+  vars:
+    - docker_user: coffeeinacafe
+  roles:
+    - pull-docker-images
+    - deploy-database
+    - deploy-frontend
+    - deploy-backend
+    - deploy-WebRTC_Signaling_Server

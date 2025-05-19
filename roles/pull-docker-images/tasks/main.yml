@@ -1,0 +1,14 @@
+---
+# Pull Docker images manually
+- name: Pull mysql:8 image
+  command: docker pull mysql:8
+
+- name: Pull Docker images
+  command: docker pull {{ docker_user }}/{{ item }}
+  loop:
+    - mediconnect-webrtc_server:latest
+    - mediconnect-frontend:latest
+    - mediconnect-backend:latest
+  register: pull_result
+  debug:
+    msg: "Pulled image {{ item }} with result: {{ pull_result.results[loop.index0].stdout }}"

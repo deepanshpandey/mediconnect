@@ -83,7 +83,7 @@ services:
       - "5000:5000"       # TCP input
       - "9600:9600"       # Monitoring
     volumes:
-      - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - ./ELK/pipeline:/usr/share/logstash/pipeline
     depends_on:
       - elasticsearch
 
