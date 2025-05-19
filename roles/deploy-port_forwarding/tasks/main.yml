@@ -1,17 +1,60 @@
 - name: Port-forward backend
-  shell: kubectl port-forward service/node-backend-service 3000:3000 > /tmp/backend.log &
+  shell: nohup kubectl port-forward service/node-backend-service 3000:3000 > /tmp/backend.log 2>&1 &
   async: 1
   poll: 0
+  register: backend_pf
+
+- name: Wait for backend to be accessible on port 3000
+  wait_for:
+    host: "127.0.0.1"
+    port: 3000
+    timeout: 60
+
+- name: Port-forward Pause
+  pause:
+    seconds: 15
 
 - name: Port-forward frontend
-  shell: kubectl port-forward service/frontend-web-service 8000:80 > /tmp/frontend.log &
+  shell: nohup kubectl port-forward service/frontend-web-service 8000:80 > /tmp/frontend.log 2>&1 &
   async: 1
   poll: 0
+  register: frontend_pf
+
+- name: Wait for frontend to be accessible on port 8000
+  wait_for:
+    host: "127.0.0.1"
+    port: 8000
+    timeout: 60
+
+- name: Port-forward Pause
+  pause:
+    seconds: 15
 
 - name: Port-forward signaling server
-  shell: kubectl port-forward service/webrtc-server-service 4440:4440 > /tmp/signaling.log &
+  shell: nohup kubectl port-forward service/webrtc-server-service 4440:4440 > /tmp/signaling.log 2>&1 &
   async: 1
   poll: 0
+  register: signaling_pf
+
+- name: Wait for signaling server to be accessible on port 4440
+  wait_for:
+    host: "127.0.0.1"
+    port: 4440
+    timeout: 60
+
+
+- name: Debug backend port-forward
+  debug:
+    var: backend_pf
+
+- name: Debug signaling server port-forward
+  debug:
+    var: signaling_pf
+
+- name: Debug frontend port-forward
+  debug:
+    var: frontend_pf
+
 
 # - name: Port-forward MYSQL
 #   shell: kubectl port-forward service/db-service 3300:3300 > /tmp/mysql.log &

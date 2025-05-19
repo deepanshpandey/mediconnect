@@ -18,8 +18,10 @@ Another feature is that there is no need to share IDs. When a patient calls a do
 
 ### Additional Commands
 
+the below allows tasks to be backgrounded and run in parallel
+
 ```bash
-minikube addons enable ingress
+sudo apt-get install -y tmux
 ```
 
 ### Allow Passwordless sudo for ansible-playbook

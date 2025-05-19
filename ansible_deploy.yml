@@ -12,6 +12,7 @@
     - pull-docker-images
     # - deploy-combined_backend
     - deploy-database
+    - wait-15
     - deploy-backend
     - deploy-frontend
     - deploy-WebRTC_Signaling_Server

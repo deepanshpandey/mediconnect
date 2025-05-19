@@ -1,0 +1,3 @@
+- name: Wait for 5 seconds
+  pause:
+    seconds: 5

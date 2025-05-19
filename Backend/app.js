@@ -1,127 +1,122 @@
-const logger = require('./logger')
+const logger = require('./logger');
 require("dotenv").config();
 const express = require("express");
 const cors = require('cors');
 const userRouter = require("./users/user.router");
 
-
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 app.use("/api/users", userRouter);
 
-
+// === MYSQL CONNECTION HANDLER WITH RETRY ===
 const mysql = require('mysql2');
-const con = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PWD,
-  database: process.env.MYSQL_DATABASE
-});
+let con;
 
-con.connect((err) => {
-  if (err) {
-    console.error('Database connection failed:', err.stack);
-    return;
-  }
-  console.log('Connected to MySQL database.');
-});
-
-
-// Create database and table if not exists.
-con.connect(function (err) {
-  if (err) throw err;
-
-  con.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.MYSQL_DATABASE}\``, function (err, result) {
-    if (err) throw err;
+function handleMySQLConnection() {
+  con = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PWD,
+    database: process.env.MYSQL_DATABASE
   });
 
-  stmt = `CREATE TABLE IF NOT EXISTS \`${process.env.MYSQL_DATABASE}\`.\`user_doctor\` (` +
-  "`id` INT NOT NULL AUTO_INCREMENT," +
-  "`firstname` VARCHAR(45) NOT NULL," +
-  "`lastname` VARCHAR(45) NULL," +
-  "`email` VARCHAR(45) NOT NULL," +
-  "`password` VARCHAR(100) NOT NULL," +
-  "`namespace_id` VARCHAR(45) NOT NULL," +
-  "`specialization` ENUM ('Cardiologist', 'Dermatologist', 'General Medicine (MD)', 'Dentist', 'Gynecologist', 'Neurologist',  'Physiotherapist', 'Orthopedic') NOT NULL," +
-  "PRIMARY KEY (`id`)," +
-  "UNIQUE INDEX `namespace_id_UNIQUE` (`namespace_id` ASC)," +
-  "UNIQUE INDEX `id_UNIQUE` (`id` ASC)," +
-  "UNIQUE INDEX `email_UNIQUE` (`email` ASC))";
+  con.connect((err) => {
+    if (err) {
+      logger.error('Initial MySQL connection failed. Retrying in 5 seconds...', err.message);
+      setTimeout(handleMySQLConnection, 5000); // Retry after delay
+    } else {
+      logger.info('Connected to MySQL database.');
 
-  con.query(stmt, function (err, result) {
-    if (err) throw err;
+      // Create tables if not exist
+      initializeDatabase();
+    }
   });
 
-  stmt = `CREATE TABLE IF NOT EXISTS \`${process.env.MYSQL_DATABASE}\`.\`user_patient\` (` +
-  "`id` INT NOT NULL AUTO_INCREMENT," +
-  "`firstname` VARCHAR(45) NOT NULL," +
-  "`lastname` VARCHAR(45) NULL," +
-  "`email` VARCHAR(45) NOT NULL," +
-  "`password` VARCHAR(100) NOT NULL," +
-  "PRIMARY KEY (`id`)," +
-  "UNIQUE INDEX `id_UNIQUE` (`id` ASC)," +
-  "UNIQUE INDEX `email_UNIQUE` (`email` ASC) )";
-
-  con.query(stmt, function (err, result) {
-    if (err) throw err;
+  con.on('error', (err) => {
+    logger.error('MySQL error: ', err.message);
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+      handleMySQLConnection(); // Retry on lost connection
+    } else {
+      throw err;
+    }
   });
+}
 
+// === Create DB & Tables ===
+function initializeDatabase() {
+  const db = process.env.MYSQL_DATABASE;
+  const run = (stmt) => con.query(stmt, (err) => { if (err) logger.error(err); });
 
-  stmt = `CREATE TABLE IF NOT EXISTS \`${process.env.MYSQL_DATABASE}\`.\`pending_calls\` (` +
-    "`id` INT NOT NULL AUTO_INCREMENT," +
-    "`roomid` VARCHAR(45) NOT NULL," +
-    "`doctor_id` INT NOT NULL," +
-    "`patient_id` INT NOT NULL," +
-    "PRIMARY KEY (`id`)," +
-    "CONSTRAINT `doctor_id` " +
-      "FOREIGN KEY (`doctor_id`) "+
-      "REFERENCES `mediconnect`.`user_doctor` (`id`) " +
-      "ON DELETE CASCADE " +
-      "ON UPDATE CASCADE, " +
-    "CONSTRAINT `patient_id` " +
-      "FOREIGN KEY (`patient_id`) " +
-      "REFERENCES `mediconnect`.`user_patient` (`id`) " +
-      "ON DELETE CASCADE " +
-      "ON UPDATE CASCADE )";
+  run(`CREATE DATABASE IF NOT EXISTS \`${db}\``);
 
-      con.query(stmt, function (err, result) {
-        if (err) throw err;
-      });
-    
+  run(`CREATE TABLE IF NOT EXISTS \`${db}\`.\`user_doctor\` (
+    id INT NOT NULL AUTO_INCREMENT,
+    firstname VARCHAR(45) NOT NULL,
+    lastname VARCHAR(45),
+    email VARCHAR(45) NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    namespace_id VARCHAR(45) NOT NULL,
+    specialization ENUM (
+      'Cardiologist', 'Dermatologist', 'General Medicine (MD)', 'Dentist',
+      'Gynecologist', 'Neurologist', 'Physiotherapist', 'Orthopedic'
+    ) NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE INDEX namespace_id_UNIQUE (namespace_id),
+    UNIQUE INDEX id_UNIQUE (id),
+    UNIQUE INDEX email_UNIQUE (email)
+  )`);
 
-      stmt = `CREATE TABLE IF NOT EXISTS \`${process.env.MYSQL_DATABASE}\`.\`prescription\` (` +   
-      "`id` INT NOT NULL AUTO_INCREMENT," +
-      "`details` TEXT(1000) NULL," +
-      "`doctor_id` INT NOT NULL," +
-      "`patient_id` INT NOT NULL," +
-      "PRIMARY KEY (`id`)," +
-      "CONSTRAINT `prescription_doctor_id` " +
-        "FOREIGN KEY (`doctor_id`) "+
-        "REFERENCES `mediconnect`.`user_doctor` (`id`) " +
-        "ON DELETE CASCADE " +
-        "ON UPDATE CASCADE, " +
-      "CONSTRAINT `prescription_patient_id` " +
-        "FOREIGN KEY (`patient_id`) " +
-        "REFERENCES `mediconnect`.`user_patient` (`id`) " +
-        "ON DELETE CASCADE " +
-        "ON UPDATE CASCADE )";
-  
-        con.query(stmt, function (err, result) {
-          if (err) throw err;
-        });
+  run(`CREATE TABLE IF NOT EXISTS \`${db}\`.\`user_patient\` (
+    id INT NOT NULL AUTO_INCREMENT,
+    firstname VARCHAR(45) NOT NULL,
+    lastname VARCHAR(45),
+    email VARCHAR(45) NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE INDEX id_UNIQUE (id),
+    UNIQUE INDEX email_UNIQUE (email)
+  )`);
 
-});
+  run(`CREATE TABLE IF NOT EXISTS \`${db}\`.\`pending_calls\` (
+    id INT NOT NULL AUTO_INCREMENT,
+    roomid VARCHAR(45) NOT NULL,
+    doctor_id INT NOT NULL,
+    patient_id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (doctor_id) REFERENCES \`${db}\`.user_doctor(id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (patient_id) REFERENCES \`${db}\`.user_patient(id)
+      ON DELETE CASCADE ON UPDATE CASCADE
+  )`);
 
+  run(`CREATE TABLE IF NOT EXISTS \`${db}\`.\`prescription\` (
+    id INT NOT NULL AUTO_INCREMENT,
+    details TEXT(1000),
+    doctor_id INT NOT NULL,
+    patient_id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (doctor_id) REFERENCES \`${db}\`.user_doctor(id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (patient_id) REFERENCES \`${db}\`.user_patient(id)
+      ON DELETE CASCADE ON UPDATE CASCADE
+  )`);
+}
+
+// Initialize MySQL
+handleMySQLConnection();
+
+// === Express Listener ===
 const port = process.env.APP_PORT || 3000;
 app.listen(port, () => {
-  console.log(`Backend up and running on PORT : ${port}`);
+  logger.info(`Backend up and running on PORT : ${port}`);
 });
 
+// === Optional: Handle unexpected exceptions gracefully ===
+process.on('uncaughtException', (err) => {
+  logger.error('UNCAUGHT EXCEPTION:', err.stack || err);
+});
 
-
-
-
-
-
+process.on('unhandledRejection', (reason) => {
+  logger.error('UNHANDLED PROMISE REJECTION:', reason);
+});
