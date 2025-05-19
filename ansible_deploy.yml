@@ -13,6 +13,8 @@
     # - deploy-combined_backend
     - deploy-database
     - wait-5
+    - wait-5
+    - wait-5
     - deploy-backend
     - deploy-frontend
     - deploy-WebRTC_Signaling_Server
