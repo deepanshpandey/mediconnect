@@ -1,10 +1,13 @@
 - name: Spin up application at remote machine
   hosts: all
-  become: true
+  # become: true
+  remote_user: deepanshpandey
+  environment:
+    DOCKER_HOST: "unix:///var/run/docker.sock"
   vars_files:
     - my_vault.yml
   vars:
-    - docker_user: coffeeinacafe
+    docker_user: coffeeinacafe
   roles:
     - pull-docker-images
     - deploy-database

@@ -10,5 +10,8 @@
     - mediconnect-frontend:latest
     - mediconnect-backend:latest
   register: pull_result
+
+- name: Show image pull results
   debug:
-    msg: "Pulled image {{ item }} with result: {{ pull_result.results[loop.index0].stdout }}"
+    msg: "Pulled image {{ item.item }} with result: {{ item.stdout }}"
+  loop: "{{ pull_result.results }}"

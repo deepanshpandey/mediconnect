@@ -53,5 +53,6 @@ spec:
     - protocol: TCP
       port: 3306
       targetPort: 3306
-      nodePort: 30002
+  #     nodePort: 30002
+  # type: NodePort
   clusterIP: None  # Headless service for StatefulSet
