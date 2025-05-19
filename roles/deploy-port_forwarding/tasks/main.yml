@@ -3,7 +3,7 @@
   poll: 0
 
 - name: Port-forward frontend
-  shell: nohup kubectl port-forward service/frontend-web-service 8000:80 > /tmp/frontend.log 2>&1 &
+  shell: nohup kubectl port-forward service/frontend-web-service 4200:4200 > /tmp/frontend.log 2>&1 &
   poll: 0
 
 - name: Port-forward signaling server
