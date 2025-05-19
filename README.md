@@ -2,19 +2,32 @@
 
 ## OverView
 
-Our project idea was to design a system where doctors can meet/consult patients remotely over a video/audio call. As we know there are many already available solutions where doctors and patient can consult over a video call (Hangouts, Skype, Zoom, Google Meet etc.), what our design provides which is unique/different from these already available solutions ?
+Our project idea was to design a system where doctors can meet/consult patients remotely over a video/audio call. As we know, there are many solutions available for video consultations (e.g., Hangouts, Skype, Zoom, Google Meet), so what makes our design unique?
 
 ### Peer to Peer Connection
 
-For WebRTC connection, what we will need is a signaling server. The job of this signaling server would be to help the peers connect before establishing a peer to peer connection.
-
-Once the peer to peer connection is established, the signaling server will become obsolete and it won't be required. Even if you disconnect the signaling server while the video call is still going on, you won't face any kind of disconnections. Once the connection is established, the entire thing becomes peer to peer so we can have a secure video chat without worrying about the security issues.
+For a WebRTC connection, a signaling server is needed to help establish the connection between peers. Once the connection is established, the signaling server becomes obsolete—disconnecting it will not disrupt the ongoing video call, ensuring a secure, peer-to-peer video chat.
 
 ### Multi-Stream Video Conferences
 
-In this app, any user can add multiple streams over the same connection.Why would we require such a functionality ?
-With this functionality in the patient side there can be devices connected to his/her PC and doctor can see output of it while having conversation with the patient simultaneously.
+In this application, users can add multiple streams over the same connection. This functionality allows, for example, a patient to connect additional devices so that a doctor can view multiple outputs simultaneously during a consultation.
 
-### No requirement of sharing ID's
+### No Requirement for Sharing IDs
 
-One another feature of this app is there no requirement to share ID's with which the doctors and patient gets connected. When the patient calls any doctor, the notification reaches to the doctor in real time (if he is logged in, in case the doctor is not logged in, the call will be stored in backend as pending and the notification will reach doctor when he logs in) and he/she has to just click a button to accept/reject calls.
+Another feature is that there is no need to share IDs. When a patient calls a doctor, the notification is delivered instantly if the doctor is online. If not, the call is saved as pending in the backend, and the notification appears once the doctor logs in. The doctor can then simply click a button to accept or reject the call.
+
+### Allow Passwordless sudo for ansible-playbook
+
+Run the following command:
+
+```bash
+sudo visudo
+```
+
+Then, add this line at the bottom of the file:
+
+```bash
+jenkins ALL=(<your-user-name>) NOPASSWD: /usr/bin/ansible-playbook
+```
+
+Replace `/usr/bin/ansible-playbook` with the correct path if it's different (use `which ansible-playbook` to verify the path).
