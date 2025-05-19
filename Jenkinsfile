@@ -15,7 +15,7 @@ pipeline {
                 sh 'cd Frontend/ && npm i --legacy-peer-deps'
                 sh 'cd WebRTC_Signaling_Server/ && npm i --legacy-peer-deps'
             }
-        // }
+        }
         // stage('Refresh docker and Minikube') {
         //     steps {
         //         sh '''
