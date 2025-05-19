@@ -1,0 +1,12 @@
+---
+# Deploy MySQL StatefulSet and Backend to Kubernetes
+- name: Deploy MySQL StatefulSet to Kubernetes
+  command: kubectl apply -f combined_backend.yaml
+  args:
+    chdir: Backend/k8s
+
+# Deploy Backend Horizontal Pod Autoscaler
+- name: Deploy Backend Horizontal Pod Autoscaler
+  command: kubectl apply -f backend-hpa.yaml
+  args:
+    chdir: Backend/k8s
