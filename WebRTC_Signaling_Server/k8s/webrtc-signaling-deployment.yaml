@@ -42,5 +42,4 @@ spec:
     - protocol: TCP
       port: 4440
       targetPort: 4440
-      nodePort: 30003
-  type: NodePort
+  type: ClusterIP
