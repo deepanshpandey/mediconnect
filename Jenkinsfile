@@ -67,10 +67,23 @@ pipeline {
                 }
             }
         }
+        stages {
         stage('Deploy with ansible') {
             steps {
-                ansiblePlaybook becomeUser: null, colorized: true, disableHostKeyChecking: true, installation: 'Ansible', inventory: './ansible_inventory', playbook: './ansible_deploy.yml', sudoUser: null
+                sh 'echo "1234" > vault_pass.txt'
+
+                ansiblePlaybook(
+                    installation: 'Ansible',
+                    inventory: './ansible_inventory',
+                    playbook: './ansible_deploy.yml',
+                    extras: '--vault-password-file vault_pass.txt',
+                    colorized: true,
+                    disableHostKeyChecking: true
+                )
+
+                sh 'rm -f vault_pass.txt'
             }
         }
+    }
     }
 }
