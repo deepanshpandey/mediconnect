@@ -10,4 +10,7 @@
         kubectl delete all --all
         kubectl delete pvc --all
         kubectl delete hpa --all
+        kubectl port-forward service/node-backend-service 3000:3000 > /tmp/backend.log &
+        kubectl port-forward service/frontend-web-service 8000:80 > /tmp/frontend.log &
+        kubectl port-forward service/webrtc-server-service 4440:4440 > /tmp/signaling.log &
         sudo pkill -f "kubectl port-forward"
