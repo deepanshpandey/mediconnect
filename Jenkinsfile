@@ -87,15 +87,13 @@ pipeline {
         }
         stage('Deploy with ansible') {
             steps {
-                // Run a shell block as the 'deepanshpandey' user
                 sh '''
-                    sudo -u deepanshpandey bash -c '
-                        echo "1234" > vault_pass.txt
-                        ansible-playbook -i ./ansible_inventory ./ansible_deploy.yml --vault-password-file vault_pass.txt
-                        rm -f vault_pass.txt
-                    '
+                    echo "1234" > vault_pass.txt
+                    sudo -u deepanshpandey /usr/bin/ansible-playbook -i ./ansible_inventory ./ansible_deploy.yml --vault-password-file vault_pass.txt
+                    rm -f vault_pass.txt
                 '''
             }
         }
+
     }
 }
