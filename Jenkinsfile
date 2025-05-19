@@ -14,8 +14,10 @@ pipeline {
                 sh 'cd Backend/ && npm i --legacy-peer-deps'
                 sh 'cd Frontend/ && npm i --legacy-peer-deps'
                 sh 'cd WebRTC_Signaling_Server/ && npm i --legacy-peer-deps'
-                //remove existing running containers if exists
-                sh 'minikube delete' //delete existing minikube instance if exists
+            }
+        }
+        stage('Refresh docker and Minikube') {
+            steps {
                 sh '''
                 if [ "$(docker ps -q)" ]; then
                     docker stop $(docker ps -q)
@@ -23,9 +25,14 @@ pipeline {
                     echo "No running containers to stop."
                 fi
                 '''
-                sh 'minikube start' //since we are using minikube, we need to start it first
-
-            } 
+                sh '''
+                if minikube status | grep -q "Running"; then
+                echo "Minikube already running"
+                else
+                minikube start
+                fi
+                '''
+            }
         }
         stage('Test') {
             steps {
@@ -90,7 +97,6 @@ pipeline {
                     colorized: true,
                     disableHostKeyChecking: true
                 )
-
                 sh 'rm -f vault_pass.txt'
             }
         }
