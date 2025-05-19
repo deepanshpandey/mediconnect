@@ -1,0 +1,8 @@
+- name: Deploy Ingress and Port Forward
+  command: kubectl apply -f mediconnect-ingress.yaml
+- name: port-forward for backend
+  command: kubectl port-forward service/node-backend-service 3000:3000
+- name: port-forward for frontend
+  command: kubectl port-forward service/frontend-web-service 80:80
+- name: port-forward for signaling server
+  command: kubectl port-forward service/webrtc-server-service 4440:4440

@@ -14,3 +14,5 @@
     - deploy-frontend
     - deploy-backend
     - deploy-WebRTC_Signaling_Server
+    - deploy-ingress
+    # - deploy-logging

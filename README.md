@@ -16,6 +16,12 @@ In this application, users can add multiple streams over the same connection. Th
 
 Another feature is that there is no need to share IDs. When a patient calls a doctor, the notification is delivered instantly if the doctor is online. If not, the call is saved as pending in the backend, and the notification appears once the doctor logs in. The doctor can then simply click a button to accept or reject the call.
 
+### Additional Commands
+
+```bash
+minikube addons enable ingress
+```
+
 ### Allow Passwordless sudo for ansible-playbook
 
 Run the following command:
