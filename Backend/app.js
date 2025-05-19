@@ -74,7 +74,6 @@ function handleMySQLConnection() {
       setTimeout(handleMySQLConnection, 5000); // Retry after delay
     } else {
       logger.info('Connected to MySQL database.');
-
       // Create tables if not exist
       initializeDatabase();
     }
@@ -161,7 +160,7 @@ app.listen(port, () => {
 
 // === Optional: Handle unexpected exceptions gracefully ===
 process.on('uncaughtException', (err) => {
-  logger.error('UNCAUGHT EXCEPTION:', err.stack || err);
+  logger.error('UNCAUGHT EXCEPTION:', err);
 });
 
 process.on('unhandledRejection', (reason) => {
