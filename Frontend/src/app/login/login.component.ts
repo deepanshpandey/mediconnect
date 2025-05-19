@@ -13,7 +13,7 @@ export class LoginComponent implements OnInit {
     rolelist = [
         { value: 'Doctor', viewValue: 'Doctor' },
         { value: 'Patient', viewValue: 'Patient' },
-      ];
+    ];
     
     loginForm: FormGroup;
 
