@@ -16,24 +16,6 @@ pipeline {
                 sh 'cd WebRTC_Signaling_Server/ && npm i --legacy-peer-deps'
             }
         }
-        // stage('Refresh docker and Minikube') {
-        //     steps {
-        //         sh '''
-        //         if [ "$(docker ps -q)" ]; then
-        //             docker stop $(docker ps -q)
-        //         else
-        //             echo "No running containers to stop."
-        //         fi
-        //         '''
-        //         sh '''
-        //         if minikube status | grep -q "Running"; then
-        //         echo "Minikube already running"
-        //         else
-        //         minikube start
-        //         fi
-        //         '''
-        //     }
-        // }
         stage('Test') {
             steps {
                 sh 'cd Backend/ && cp .env_test .env && npm test'
@@ -94,6 +76,5 @@ pipeline {
                 '''
             }
         }
-
     }
 }
