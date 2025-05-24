@@ -6,7 +6,7 @@
   poll: 0
 
 - name: Open Prometheus service in browser (async)
-  shell: nohup minikube service monitoring-kube-prometheus-prometheus -n monitoring &
+  shell: nohup minikube service prometheus-server -n monitoring &
   register: prometheus_service
   async: 30
   poll: 0

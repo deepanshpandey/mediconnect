@@ -7,9 +7,6 @@
   tasks:
     - name: Delete all Kubernetes resources
       shell: |
-        kubectl port-forward service/node-backend-service 3000:3000 > /tmp/backend.log &
-        kubectl port-forward service/frontend-web-service 8000:80 > /tmp/frontend.log &
-        kubectl port-forward service/webrtc-server-service 4440:4440 > /tmp/signaling.log &
         lsof -i :3000
         lsof -i :8000
         lsof -i :4440
