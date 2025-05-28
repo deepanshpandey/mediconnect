@@ -39,4 +39,3 @@ jenkins ALL=(<your-user-name>) NOPASSWD: /usr/bin/ansible-playbook
 ```
 
 Replace `/usr/bin/ansible-playbook` with the correct path if it's different (use `which ansible-playbook` to verify the path).
-
